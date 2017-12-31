@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="WebServers">
+    <option name="servers">
+      <webServer id="eab24047-f2fd-4197-b4a3-29afc0a119c5" name="dbb-interactive" url="http://52.4.88.164">
+        <fileTransfer host="52.4.88.164" port="22" privateKey="D:\dmz\990consulting.pem" rootFolder="/home/dbborens" accessType="SFTP" keyPair="true">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" />
+          </advancedOptions>
+          <option name="port" value="22" />
+        </fileTransfer>
+      </webServer>
+    </option>
+  </component>
+</project>
