@@ -1,6 +1,6 @@
-# open990 -- Open IRS Form 990 Tools from [opendata.love](https://opendata.love)
+# open990 -- Open IRS Form 990 Tools
 
-`open990` is a free and open source command line tool for generating data extracts from the IRS Form 990 e-file dataset hosted on Amazon Web services.
+`open990` is a free and open source command line tool for generating data extracts from the IRS Form 990 e-file dataset hosted on Amazon Web services. They are developed and maintained by [opendata.love](https://opendata.love), which specializes in IRS Form 990 analysis.
 
 ## Attribution
 
