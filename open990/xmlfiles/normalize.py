@@ -1,9 +1,11 @@
 from lxml import etree
-import re
 # noinspection PyProtectedMember
 from open990.definitions import ROOT_DIR
-
+from open990.xmlfiles import util
 from lxml.etree import _Element
+
+from xmlfiles.util import _strip_whitespace, _strip_namespace
+
 
 def _transform(to_transform: str) -> str:
     path = ROOT_DIR + "/../data/attrib2elem.xsl"
@@ -21,18 +23,10 @@ def _attribs_to_elements(original: _Element) -> _Element:
     transformed = _transform(original)
     t_str = str(transformed)
     stripped = _strip_whitespace(t_str)
-    tree = etree.fromstring(stripped)
-    return tree
-
-def _strip_namespace(raw: str) -> str:
-    no_ns = re.sub('(xmlns|xsi)(:.*?)?=\".*?\"', "", raw)
-    return no_ns
+    return stripped
 
 
 # SO 25771405
-def _strip_whitespace(raw: str) -> str:
-    stripped = re.sub("[\s]+(?![^><]*>)", "", raw)
-    return stripped
 
 def normalize(raw_xml: str) -> str:
     """
@@ -41,8 +35,7 @@ def normalize(raw_xml: str) -> str:
     :param raw_xml: XML-formatted string to normalize
     :return: string containing normalized XML.
     """
-    no_namespace = _strip_namespace(raw_xml)
-    stripped = _strip_whitespace(no_namespace)
-    dom = _as_xml(stripped)
+    cleaned = util.clean_xml(raw_xml)
+    dom = _as_xml(cleaned)
     normalized = _attribs_to_elements(dom)
     return normalized

@@ -1,5 +1,5 @@
+from open990.xmlfiles import util
 from open990.xmlfiles import normalize as N
-from open990.xmlfiles.util import consolidate_text
 from lxml import etree
 from mockito import mock
 
@@ -9,48 +9,20 @@ def test_attribs_to_elements(when):
     transformed = "transformed"
     when(N)._transform(original).thenReturn(transformed)
 
-    stripped = "stripped"
-    when(N)._strip_whitespace(transformed).thenReturn(stripped)
-
-    expected = mock()
-    when(etree).fromstring(stripped).thenReturn(expected)
+    expected = "stripped"
+    when(N)._strip_whitespace(transformed).thenReturn(expected)
 
     actual = N._attribs_to_elements(original)
-    assert expected == actual
-
-def test_strip_namespace(when):
-    to_strip = '<Return xmlns="http://www.irs.gov/efile" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.irs.gov/efile" returnVersion="2009v1.0">'
-    expected = '<Return returnVersion="2009v1.0">'
-
-    actual = N._strip_namespace(to_strip)
-
-    # Don't care if there's extra whitespace
-    actual_standardized = " ".join(actual.split())
-    assert expected == actual_standardized
-
-def test_strip_whitespace():
-    raw = """
-    <inner>
-        <outer />
-    </inner>
-    """
-
-    # Removes any whitespace between tags
-    expected = "<inner><outer /></inner>"
-    actual = N._strip_whitespace(raw)
     assert expected == actual
 
 def test_normalize(when):
     raw = "the original XML"
 
-    no_namespace = "the namespace has been removed"
-    when(N)._strip_namespace(raw).thenReturn(no_namespace)
-
-    stripped = "interstitial whitespace has been stripped"
-    when(N)._strip_whitespace(no_namespace).thenReturn(stripped)
+    cleaned = "removed namespace and interstitial whitespace"
+    when(util).clean_xml(raw).thenReturn(cleaned)
 
     dom = mock()
-    when(N)._as_xml(stripped).thenReturn(dom)
+    when(N)._as_xml(cleaned).thenReturn(dom)
 
     expected = "string containing normalized XML"
     when(N)._attribs_to_elements(dom).thenReturn(expected)
@@ -78,11 +50,14 @@ def test_normalize_f():
     # Verify manually
     actual = N.normalize(raw)
     assert actual is not None
-    assert etree._Element == actual.__class__
-    assert {}            == actual.attrib
-    assert "element"     == actual.tag
-    assert {"attribute"} == set([c.tag for c in actual])
-    assert "value"       == actual[0].text
+
+    et = etree.fromstring(actual)
+
+    assert etree._Element == et.__class__
+    assert {}             == et.attrib
+    assert "element"      == et.tag
+    assert {"attribute"}  == set([c.tag for c in et])
+    assert "value"        == et[0].text
 
 def test_normalize_f_recursive():
     raw = """
@@ -107,13 +82,15 @@ def test_normalize_f_recursive():
     # Verify manually
     actual = N.normalize(raw)
     assert actual is not None
-    assert actual.text is None
-    assert etree._Element == actual.__class__
-    assert {}             == actual.attrib
-    assert "outer"        == actual.tag
-    assert {"inner"}      == set([c.tag for c in actual])
 
-    inner = actual[0]
+    et = etree.fromstring(actual)
+    assert et.text is None
+    assert etree._Element == et.__class__
+    assert {}             == et.attrib
+    assert "outer"        == et.tag
+    assert {"inner"}      == set([c.tag for c in et])
+
+    inner = et[0]
     assert "inner" == inner.tag
     assert inner.text is None
 
@@ -140,11 +117,13 @@ def test_normalize_f_text():
 
     actual = N.normalize(raw)
     assert actual is not None
-    assert "e"           == actual.tag
-    assert "text"        == consolidate_text(actual)
-    assert {}            == actual.attrib
-    assert {"attribute"} == set([c.tag for c in actual])
-    assert "value"       ==actual[0].text
+
+    et = etree.fromstring(actual)
+    assert "e"           == et.tag
+    assert "text"        == util.consolidate_text(et)
+    assert {}            == et.attrib
+    assert {"attribute"} == set([c.tag for c in et])
+    assert "value"       ==et[0].text
 
 def test_normalize_f_namespace():
     raw = """
@@ -163,8 +142,10 @@ def test_normalize_f_namespace():
 
     actual = N.normalize(raw)
     assert actual is not None
-    assert actual.text is None
 
-    assert "outer"   == actual.tag
-    assert {}        == actual.attrib
-    assert {"inner"} == set([c.tag for c in actual])
+    et = etree.fromstring(actual)
+
+    assert et.text is None
+    assert "outer"   == et.tag
+    assert {}        == et.attrib
+    assert {"inner"} == set([c.tag for c in et])
