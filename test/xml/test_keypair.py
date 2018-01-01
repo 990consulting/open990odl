@@ -30,3 +30,4 @@ def test_flatten_f():
     expected_set = set(expected)
     actual_set = set(actual)
     assert expected_set == actual_set
+

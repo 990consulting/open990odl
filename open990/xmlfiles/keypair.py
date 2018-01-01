@@ -22,11 +22,11 @@ def flatten(xml_str: str) -> List[Tuple]:
     for event, element in etree.iterparse(raw_bytes, events=("start", "end")):
         if event == "start":
             xpath_root += "/%s" % element.tag
+        else:
             util.assert_not_empty(element)
             if element.text is not None:
                 pair = (xpath_root, element.text)
                 pairs.append(pair)
-        else:
             n = len(element.tag) + 1
             xpath_root = xpath_root[:-n]
     return pairs

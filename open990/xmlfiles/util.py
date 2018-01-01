@@ -28,14 +28,15 @@ def raise_on_empty(raw: str) -> None:
      :return: None
     """
     stripped = clean_xml(raw)
-    raw_bytes = io.BytesIO(bytes(stripped, "ascii"))
-
-    for event, element in etree.iterparse(raw_bytes, events=("start",)):
+    raw_bytes = io.BytesIO(bytes(stripped, "utf-8"))
+    for event, element in etree.iterparse(raw_bytes, events=("end",)):
         assert_not_empty(element)
 
 def assert_not_empty(elem: _Element) -> None:
     is_empty = elem.text is None and len(elem) == 0
     assert not is_empty
+    if is_empty:
+        print(elem.tag)
 
 def _strip_whitespace(raw: str) -> str:
     stripped = re.sub("[\s]+(?![^><]*>)", "", raw)
@@ -44,6 +45,14 @@ def _strip_whitespace(raw: str) -> str:
 def _strip_namespace(raw: str) -> str:
     no_ns = re.sub('(xmlns|xsi)(:.*?)?=\".*?\"', "", raw)
     return no_ns
+
+def _to_ascii(raw: str) -> str:
+    if raw.__class__ == str:
+        b = raw.encode("ascii", "ignore")
+    else:
+        b = raw
+
+    return b.decode("ascii")
 
 def clean_xml(raw: str) -> str:
     """
@@ -58,4 +67,6 @@ def clean_xml(raw: str) -> str:
     """
     no_ns = _strip_namespace(raw)
     stripped = _strip_whitespace(no_ns)
+    with open("/tmp/cleaned.xml", "w") as o:
+        o.write(stripped)
     return stripped
