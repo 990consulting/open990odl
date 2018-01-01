@@ -22,7 +22,7 @@ def test_flatten_f():
     ]
 
     cleaned = util.clean_xml(raw)
-    actual = keypair.flatten(cleaned)
+    actual = keypair._flatten_single(cleaned)
 
     assert actual is not None
     assert actual.__class__ == list

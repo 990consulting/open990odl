@@ -6,7 +6,7 @@ from open990.xmlfiles import util
 # noinspection PyProtectedMember
 from lxml.etree import _Element
 
-def flatten(xml_str: str) -> List[Tuple]:
+def _flatten_single(xml_str: str) -> List[Tuple]:
     """
     Transforms XML into a list of key-value pairs, with the keys consisting
     of normalized Xpaths and the values consisting of the text from each
