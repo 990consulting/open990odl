@@ -9,8 +9,8 @@ def test_attribs_to_elements(when):
     transformed = "transformed"
     when(N)._transform(original).thenReturn(transformed)
 
-    expected = "stripped"
-    when(N)._strip_whitespace(transformed).thenReturn(expected)
+    expected = "cleaned"
+    when(util).clean_xml(transformed).thenReturn(expected)
 
     actual = N._attribs_to_elements(original)
     assert expected == actual

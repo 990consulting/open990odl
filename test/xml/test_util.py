@@ -23,7 +23,8 @@ def test_strip_namespace():
     actual_standardized = " ".join(actual.split())
     assert expected == actual_standardized
 
-def test_raise_on_empty_passes():
+def test_raise_on_empty_passes(when):
+    raw = "uncleaned XML"
     ok = """
         <first xmlns="http://www.blah.com">
             <second>
@@ -31,9 +32,11 @@ def test_raise_on_empty_passes():
             </second>
         </first>
         """
-    util.raise_on_empty(ok)
+    when(util).clean_xml(raw).thenReturn(ok)
+    util.raise_on_empty(raw)
 
-def test_raise_on_empty_contracted():
+def test_raise_on_empty_contracted(when):
+    raw = "uncleaned XML"
     not_ok = """
         <first xmlns="http://www.blah.com">
             <second>
@@ -42,10 +45,12 @@ def test_raise_on_empty_contracted():
             </second>
         </first>
         """
+    when(util).clean_xml(raw).thenReturn(not_ok)
     with raises(AssertionError):
-        util.raise_on_empty(not_ok)
+        util.raise_on_empty(raw)
 
-def test_raise_on_empty_expanded():
+def test_raise_on_empty_expanded(when):
+    raw = "uncleaned XML"
     not_ok = """
         <first xmlns="http://www.blah.com">
             <second>
@@ -54,11 +59,6 @@ def test_raise_on_empty_expanded():
             </second>
         </first>
         """
+    when(util).clean_xml(raw).thenReturn(not_ok)
     with raises(AssertionError):
-        util.raise_on_empty(not_ok)
-
-def test_raise_on_empty_uses_clean(when):
-    raw = "shouldn't run on this"
-    cleaned = "<this_is>what we want</this_is>"
-    when(util).clean_xml(raw).thenReturn(cleaned)
-    util.raise_on_empty(raw)
+        util.raise_on_empty(raw)

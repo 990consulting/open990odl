@@ -1,15 +1,30 @@
 from lxml import etree
-# noinspection PyProtectedMember
-from open990.definitions import ROOT_DIR
 from open990.xmlfiles import util
+
+# noinspection PyProtectedMember
 from lxml.etree import _Element
 
-from xmlfiles.util import _strip_whitespace, _strip_namespace
-
-
+# 10645359
+# 16698935
 def _transform(to_transform: str) -> str:
-    path = ROOT_DIR + "/../data/attrib2elem.xsl"
-    xslt = etree.parse(path)
+    xslt_str = """
+        <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+            xmlns:msxsl="urn:schemas-microsoft-com:xslt" exclude-result-prefixes="msxsl">
+            <xsl:output method="xml" indent="yes"/>
+
+            <xsl:template match="@* | node()">
+                <xsl:copy>
+                    <xsl:apply-templates select="@* | node()"/>
+                </xsl:copy>
+            </xsl:template>
+
+          <xsl:template match="@*">
+            <xsl:element name="{name()}"><xsl:value-of select="."/></xsl:element>
+          </xsl:template>
+        </xsl:stylesheet>
+    """
+
+    xslt = etree.fromstring(xslt_str)
 
     transform = etree.XSLT(xslt)
     transformed = transform(to_transform)
@@ -22,8 +37,8 @@ def _as_xml(s: str) -> _Element:
 def _attribs_to_elements(original: _Element) -> _Element:
     transformed = _transform(original)
     t_str = str(transformed)
-    stripped = _strip_whitespace(t_str)
-    return stripped
+    cleaned = util.clean_xml(t_str)
+    return cleaned
 
 
 # SO 25771405
