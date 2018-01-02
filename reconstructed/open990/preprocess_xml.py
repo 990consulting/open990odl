@@ -9,12 +9,15 @@ import time
 import io
 
 spark = SparkSession.builder.getOrCreate()
-sc = spark.sparkContext
 
 udf_clean = udf(clean_xml, StringType())
 udf_normalize = udf(normalize, StringType())
 
-description = ""
+description = """Starting with one or more parquet files containing filings, 
+validate each filing and reformat it for downstream analysis. Returns a 
+parquet file with the contents of the target column from the original parquet 
+file(s) replaced. All input parquet files must be in the same format."""
+
 parser = arguments.base_parser(description)
 parser = arguments.input_arg(parser)
 parser = arguments.target_column(parser)

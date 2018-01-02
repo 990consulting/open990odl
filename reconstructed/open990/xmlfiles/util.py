@@ -26,5 +26,4 @@ def clean_xml(raw: str) -> str:
     a = raw.encode("ascii", "ignore").decode("ascii")
     no_encoding = _strip_encoding(a)
     no_ns = _strip_namespace(no_encoding)
-    stripped = _strip_whitespace(no_ns)
-    return stripped
+    return no_ns

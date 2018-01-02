@@ -36,8 +36,7 @@ def _as_xml(s: str) -> _Element:
 def _attribs_to_elements(original: _Element) -> _Element:
     transformed = _transform(original)
     t_str = str(transformed)
-    cleaned = clean_xml(t_str)
-    return cleaned
+    return t_str
 
 def normalize(raw_xml: str) -> str:
     """
