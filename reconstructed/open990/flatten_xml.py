@@ -44,4 +44,5 @@ spark.read.parquet(*args.input) \
     .withColumn(args.xpath_column, col("dummy.xpath")) \
     .withColumn(args.value_column, col("dummy.value")) \
     .drop("dummy") \
+    .drop("xml") \
     .write.parquet(output_path, mode="overwrite")
