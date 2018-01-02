@@ -9,7 +9,7 @@ spark = SparkSession.builder.getOrCreate()
 sc = spark.sparkContext
 
 
-def preprocess_xml(original: str) -> str:
+def _do_clean(original: str) -> str:
     """
     Validate and reformat an XML-based IRS Form 990x e-filing for downstream
     processing.
@@ -19,15 +19,16 @@ def preprocess_xml(original: str) -> str:
     """
     cleaned = util.clean_xml(original)
     util.raise_on_empty(cleaned)
-    normalized = normalize.normalize(cleaned)
-    return normalized
+    return cleaned
 
-udf_preprocess = udf(preprocess_xml, StringType())
+udf_clean = udf(_do_clean, StringType())
+udf_normalize = udf(normalize.normalize, StringType())
 
 def do_preprocess(args: Namespace) -> None:
     tgt = args.target_column
     output_path = arguments.get_output_path(args)
     spark.read.parquet(*args.input) \
         .repartition(args.partitions) \
-        .withColumn(tgt, udf_preprocess(tgt)) \
+        .withColumn(tgt, udf_clean(tgt)) \
+        .withColumn(tgt, udf_normalize(tgt)) \
         .write.parquet(output_path)

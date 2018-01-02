@@ -1,9 +1,5 @@
 import re
-import io
-
-# noinspection PyProtectedMember
 from lxml.etree import _Element
-from lxml import etree
 
 # SO 4770191
 def consolidate_text(elem: _Element) -> str:
@@ -16,28 +12,6 @@ def consolidate_text(elem: _Element) -> str:
     texts = elem.xpath("text()")
     return "".join(texts)
 
-def raise_on_empty(raw: str) -> None:
-    """
-    Assert that every element in an XML hierarchy is non-empty; that is,
-    it contains either text or at least one child element. To the best of my
-    knowledge, the 990 schemas always meet this constraint; however, if they
-    should fail to do so, it would cause some of this code to break silently,
-    so we want to detect it.
-
-     :param raw: string containing raw XML
-     :return: None
-    """
-    stripped = clean_xml(raw)
-    raw_bytes = io.BytesIO(bytes(stripped, "utf-8"))
-    for event, element in etree.iterparse(raw_bytes, events=("end",)):
-        assert_not_empty(element)
-
-def assert_not_empty(elem: _Element) -> None:
-    is_empty = elem.text is None and len(elem) == 0
-    assert not is_empty
-    if is_empty:
-        print(elem.tag)
-
 def _strip_whitespace(raw: str) -> str:
     stripped = re.sub("[\s]+(?![^><]*>)", "", raw)
     return stripped
@@ -46,13 +20,9 @@ def _strip_namespace(raw: str) -> str:
     no_ns = re.sub('(xmlns|xsi)(:.*?)?=\".*?\"', "", raw)
     return no_ns
 
-def _to_ascii(raw: str) -> str:
-    if raw.__class__ == str:
-        b = raw.encode("ascii", "ignore")
-    else:
-        b = raw
-
-    return b.decode("ascii")
+def _strip_encoding(raw: str) -> str:
+    no_encoding = re.sub("\<\?xml.+\?\>", "", raw)
+    return no_encoding
 
 def clean_xml(raw: str) -> str:
     """
@@ -65,8 +35,7 @@ def clean_xml(raw: str) -> str:
     :return: string containing XML with namespaces and interstitial
     whitespace removed.
     """
-    no_ns = _strip_namespace(raw)
-    stripped = _strip_whitespace(no_ns)
-    with open("/tmp/cleaned.xml", "w") as o:
-        o.write(stripped)
-    return stripped
+    a = raw.encode("ascii", "ignore").decode("ascii")
+    no_encoding = _strip_encoding(a)
+    no_ns = _strip_namespace(no_encoding)
+    return no_ns
