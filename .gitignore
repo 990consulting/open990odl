@@ -104,3 +104,8 @@ ENV/
 **/sandbox.py
 **/tmp
 **/output
+**/.*.swp
+**/*.bak
+**/dependencies.zip
+**/out
+**/err
