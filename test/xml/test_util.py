@@ -23,42 +23,22 @@ def test_strip_namespace():
     actual_standardized = " ".join(actual.split())
     assert expected == actual_standardized
 
-def test_raise_on_empty_passes(when):
-    raw = "uncleaned XML"
-    ok = """
-        <first xmlns="http://www.blah.com">
-            <second>
-                <a>text</a>
-            </second>
-        </first>
-        """
-    when(util).clean_xml(raw).thenReturn(ok)
-    util.raise_on_empty(raw)
+def test_strip_encoding():
+    to_strip = '<?xml version="xml-1.0" encoding="utf-8" ?>'
+    expected = ''
+    actual = util._strip_encoding(to_strip)
+    assert expected == actual
 
-def test_raise_on_empty_contracted(when):
-    raw = "uncleaned XML"
-    not_ok = """
-        <first xmlns="http://www.blah.com">
-            <second>
-                <a>text</a>
-                <b />
-            </second>
-        </first>
-        """
-    when(util).clean_xml(raw).thenReturn(not_ok)
-    with raises(AssertionError):
-        util.raise_on_empty(raw)
+def test_clean_xml(when):
+    raw = "this is the original string"
 
-def test_raise_on_empty_expanded(when):
-    raw = "uncleaned XML"
-    not_ok = """
-        <first xmlns="http://www.blah.com">
-            <second>
-                <a>text</a>
-                <b></b>
-            </second>
-        </first>
-        """
-    when(util).clean_xml(raw).thenReturn(not_ok)
-    with raises(AssertionError):
-        util.raise_on_empty(raw)
+    no_encoding = """this has had the encoding string removed (the IRS claimed
+                  UTF-8 but had lots of extended characters that blew things up
+                  """
+    when(util)._strip_encoding(raw).thenReturn(no_encoding)
+
+    expected = "namespaces have been removed."
+    when(util)._strip_namespace(no_encoding).thenReturn(expected)
+
+    actual = util.clean_xml(raw)
+    assert expected == actual

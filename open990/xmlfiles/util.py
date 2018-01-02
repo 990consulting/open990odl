@@ -24,6 +24,9 @@ def _strip_encoding(raw: str) -> str:
     no_encoding = re.sub("\<\?xml.+\?\>", "", raw)
     return no_encoding
 
+def _to_ascii(raw: str) -> str:
+    return raw.encode("ascii", "ignore").decode("ascii")
+
 def clean_xml(raw: str) -> str:
     """
     Remove interstitial whitespace (whitespace between XML tags) and

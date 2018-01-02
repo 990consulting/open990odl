@@ -5,6 +5,13 @@ from lxml import etree
 # noinspection PyProtectedMember
 from lxml.etree import _Element
 
+def _is_blank(text: str) -> bool:
+    if text is None:
+        return True
+    if text.strip() == "":
+        return True
+    return False
+
 def flatten(xml_str: str) -> List[Tuple]:
     raw_bytes = io.BytesIO(bytes(xml_str, "ascii"))
     pairs = []
@@ -13,8 +20,8 @@ def flatten(xml_str: str) -> List[Tuple]:
         if event == "start":
             xpath_root += "/%s" % element.tag
         else:
-            if element.text is not None:
-                pair = (xpath_root, element.text)
+            if not _is_blank(element.text):
+                pair = (xpath_root, element.text.strip())
                 pairs.append(pair)
             n = len(element.tag) + 1
             xpath_root = xpath_root[:-n]

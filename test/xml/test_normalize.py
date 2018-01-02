@@ -6,11 +6,8 @@ from mockito import mock
 def test_attribs_to_elements(when):
     original = mock()
 
-    transformed = "transformed"
-    when(N)._transform(original).thenReturn(transformed)
-
-    expected = "cleaned"
-    when(util).clean_xml(transformed).thenReturn(expected)
+    expected = "transformed"
+    when(N)._transform(original).thenReturn(expected)
 
     actual = N._attribs_to_elements(original)
     assert expected == actual
@@ -18,11 +15,8 @@ def test_attribs_to_elements(when):
 def test_normalize(when):
     raw = "the original XML"
 
-    cleaned = "removed namespace and interstitial whitespace"
-    when(util).clean_xml(raw).thenReturn(cleaned)
-
     dom = mock()
-    when(N)._as_xml(cleaned).thenReturn(dom)
+    when(N)._as_xml(raw).thenReturn(dom)
 
     expected = "string containing normalized XML"
     when(N)._attribs_to_elements(dom).thenReturn(expected)
@@ -84,7 +78,7 @@ def test_normalize_f_recursive():
     assert actual is not None
 
     et = etree.fromstring(actual)
-    assert et.text is None
+    assert ""             == et.text.strip()
     assert etree._Element == et.__class__
     assert {}             == et.attrib
     assert "outer"        == et.tag
@@ -123,29 +117,4 @@ def test_normalize_f_text():
     assert "text"        == util.consolidate_text(et)
     assert {}            == et.attrib
     assert {"attribute"} == set([c.tag for c in et])
-    assert "value"       ==et[0].text
-
-def test_normalize_f_namespace():
-    raw = """
-    <outer xmlns="horrible">
-        <inner />
-    </outer>
-    """
-
-    """
-    Expected:
-    
-    <outer>
-        <inner />
-    </outer>
-    """
-
-    actual = N.normalize(raw)
-    assert actual is not None
-
-    et = etree.fromstring(actual)
-
-    assert et.text is None
-    assert "outer"   == et.tag
-    assert {}        == et.attrib
-    assert {"inner"} == set([c.tag for c in et])
+    assert "value"       == et[0].text
