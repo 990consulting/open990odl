@@ -1,11 +1,7 @@
 from lxml import etree
-from open990.xmlfiles import util
-
-# noinspection PyProtectedMember
 from lxml.etree import _Element
+from open990.xmlfiles.util import clean_xml
 
-# 10645359
-# 16698935
 def _transform(to_transform: str) -> str:
     xslt_str = """
         <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
@@ -30,18 +26,17 @@ def _transform(to_transform: str) -> str:
     transformed = transform(to_transform)
     return transformed
 
+# SO 15830421
 def _as_xml(s: str) -> _Element:
-    return etree.fromstring(s)
+    encoded = s.encode("ascii")
+    parser = etree.XMLParser(ns_clean=True, recover=True, encoding="ascii")
+    return etree.fromstring(encoded, parser=parser)
 
 # SO 10645359
 def _attribs_to_elements(original: _Element) -> _Element:
     transformed = _transform(original)
     t_str = str(transformed)
-    cleaned = util.clean_xml(t_str)
-    return cleaned
-
-
-# SO 25771405
+    return t_str
 
 def normalize(raw_xml: str) -> str:
     """
@@ -50,7 +45,6 @@ def normalize(raw_xml: str) -> str:
     :param raw_xml: XML-formatted string to normalize
     :return: string containing normalized XML.
     """
-    cleaned = util.clean_xml(raw_xml)
-    dom = _as_xml(cleaned)
+    dom = _as_xml(raw_xml)
     normalized = _attribs_to_elements(dom)
     return normalized

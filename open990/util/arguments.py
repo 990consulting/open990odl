@@ -2,7 +2,6 @@ import argparse
 from datetime import datetime
 import time
 
-
 def base_parser(description: str) -> argparse.ArgumentParser:
 
     parser = argparse.ArgumentParser(description=description, add_help=True)
@@ -41,8 +40,13 @@ def input_arg(parser: argparse.ArgumentParser) -> argparse.ArgumentParser:
 
     return parser
 
-def target_column(parser: argparse.ArgumentParser) -> argparse.ArgumentParser:
-    parser.add_argument("--target-column", action="store",
-                        help="Column on which to perform transformation.")
+def target_column(parser: argparse.ArgumentParser, default=None) -> argparse.ArgumentParser:
+    if default is not None:
+        parser.add_argument("--target-column", action="store",
+                            help="Column on which to perform transformation.",
+                            default=default)
+    else:
+        parser.add_argument("--target-column", action="store",
+                            help="Column on which to perform transformation.")
 
     return parser
