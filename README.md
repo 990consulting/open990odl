@@ -4,8 +4,6 @@
 
 ## Attribution
 
-### Charity Navigator
-
 This package draws on an existing package, [`990_long`](https://github.com/CharityNavigator/990_long), published by [Charity Navigator](https://www.charitynavigator.org) under the [MIT License](https://opensource.org/licenses/MIT), the terms of which are available [here](https://opensource.org/licenses/MIT). The package consolidates individual XML-based 990 filings into a single Parquet file, then processes the filings into key value pairs that have been merged with the Nonprofit Open Data Collective's [990 concordance](https://github.com/Nonprofit-Open-Data-Collective/irs-efile-master-concordance-file).
 
 ## Author
