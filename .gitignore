@@ -109,3 +109,4 @@ ENV/
 **/dependencies.zip
 **/out
 **/err
+steps/**
