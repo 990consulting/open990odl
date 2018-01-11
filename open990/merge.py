@@ -15,7 +15,7 @@ parser.add_argument("--left", action="append",
 parser.add_argument("--right", action="append",
                     help="Path to right table input parquet file(s). Can "
                          "supply multiple.", required=True)
-parser.add_argument("--by", action="store", help="Column on which to join.",
+parser.add_argument("--by", action="append", help="Column(s) on which to join.",
                     required = True)
 
 
