@@ -4,17 +4,7 @@
 
 ## Attribution
 
-### Charity Navigator
-
-This package draws on existing packages that were published by [Charity Navigator](https://www.charitynavigator.org) under the [MIT License](https://opensource.org/licenses/MIT), the terms of which are available [here](https://opensource.org/licenses/MIT).
-
-* [`990_long`](https://github.com/CharityNavigator/990_long): consolidates individual XML-based 990 filings into a single Parquet file, then processes the filings into key value pairs that have been merged with the Nonprofit Open Data Collective's [990 concordance](https://github.com/Nonprofit-Open-Data-Collective/irs-efile-master-concordance-file).
-
-* [`990_metadata`](https://github.com/CharityNavigator/990_metadata): crawls XML-based 990 filings and counts Xpath usage by version.
-
-### Nonprofit Open Data Collective
-
-This project also makes use of the [community concordance](https://github.com/Nonprofit-Open-Data-Collective/irs-efile-master-concordance-file), a draft of mappings from Xpaths to variables. The concordance was created by volunteers at the 2017 [Nonprofit Datathon](https://www.aspeninstitute.org/blog-posts/aspen-institutes-program-philanthropy-social-innovation-psi-hosts-nonprofit-datathon/) and Validatathon, which both took place at the Aspen Institute in 2017. The concordance was developed by multiple parties, and contributions have continued to be published without a copyright.
+This package draws on an existing package, [`990_long`](https://github.com/CharityNavigator/990_long), published by [Charity Navigator](https://www.charitynavigator.org) under the [MIT License](https://opensource.org/licenses/MIT), the terms of which are available [here](https://opensource.org/licenses/MIT). The package consolidates individual XML-based 990 filings into a single Parquet file, then processes the filings into key value pairs that have been merged with the Nonprofit Open Data Collective's [990 concordance](https://github.com/Nonprofit-Open-Data-Collective/irs-efile-master-concordance-file).
 
 ## Author
 
