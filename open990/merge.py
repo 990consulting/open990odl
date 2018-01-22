@@ -2,7 +2,6 @@ from pyspark.sql import SparkSession
 from pyspark.sql.functions import *
 from pyspark.sql.types import *
 from open990.util import arguments
-from open990.xmlfiles.parse import flatten
 
 
 description = """General purpose left-join merge. Specify left and right 

@@ -9,6 +9,8 @@ description = """Convert one or more CSV files to parquet."""
 
 parser = arguments.base_parser(description)
 parser = arguments.input_arg(parser)
+parser.add_argument("--by", action="append", help="Column(s) on which to partition.",
+                    required = True)
 
 args = parser.parse_known_args()[0]
 
@@ -16,5 +18,7 @@ output_path = arguments.get_output_path(args)
 
 spark = SparkSession.builder.getOrCreate()
 
-spark.read.csv(*args.input, header=True) \
-    .write.parquet(output_path, mode="overwrite")
+spark.read.parquet(*args.input) \
+    .repartition(*args.by) \
+    .write.partitionBy(*args.by) \
+    .csv(output_path, header=True, mode="overwrite", compression="gzip")
